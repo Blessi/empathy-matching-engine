@@ -1,36 +1,26 @@
-#package in stallation
-install.packages("shiny")
-install.packages("lavaan")
+#matching engine
 
-#Load the lavaan package
+leb<-read.csv("leb1.csv")
+NGO<-read.csv("NGO.csv")
+head(leb)
+head(NGO)
 
-library(lavaan)
+#matchingbeneficry item with Ngos
 
-#join the tables
+match(leb$item,NGO$products)
+NGO$ngo_id[match(leb$item,NGO$products)]
+matchingngo<-NGO$ngo_id[match(leb$item,NGO$products)]
 
-libray(shiny)
-leb<-fluidPage(tableoutput('table1'),
-               tableoutput('table2')
-)
-server<-function(input,output.session){
-  output$table1<-rendeTable(requests)
-  output$table2<-rendeTable(inventory)
-}
+#matching beneficiary loaction with Ngos
 
-loc<-leb$location1==leb$location2
-ava<-leb$products[leb$item]
+match(leb$location1,NGO$location)
+NGO$ngo_id[match(leb$location1,NGO$location)]
+matchingloc<-NGO$ngo_id[match(leb$location1,NGO$location)]
 
-#model
-best.model<-'best=~loc+ava'
-
-#fit
-modelfit<-cfa(best.model,data=leb)
-
-#summary
-summary(modelfit,standardized =TRUE,fit.measures =TRUE)
-
-#result
-subset(std.lv >= o.8)
+#perfect match NGO
+match(matchingngo,matchingloc)
+best_match_ngo<-NGO$ngo_id[match(matchingngo,matchingloc)]
+best_match_ngo
 
 
 
